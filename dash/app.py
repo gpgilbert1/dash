@@ -53,7 +53,7 @@ df_new = pd.read_csv(STREETSAFE_CSV_NEW)
 df = pd.concat([df_old, df_new], ignore_index=True)
 
 # -----------------------------
-# ADD NEW DATETIME COLUMN
+# ADD NEW DATETIME COLUMN (KEEP ORIGINAL sample_date)
 # -----------------------------
 if "sample_date" not in df.columns:
     raise KeyError(f"'sample_date' column not found. Columns: {list(df.columns)}")
@@ -61,6 +61,7 @@ if "sample_date" not in df.columns:
 df["sample_datetime"] = pd.to_datetime(df["sample_date"], errors="coerce")
 df = df.dropna(subset=["sample_datetime"]).copy()
 
+# Quarter bucket (start of quarter)
 df["quarter_start"] = df["sample_datetime"].dt.to_period("Q").dt.start_time
 
 # -----------------------------
@@ -130,7 +131,7 @@ if len(top_substances) > TOP_N_SUBSTANCES:
     top_substances = rebuilt
 
 # -----------------------------
-# QUARTER SLIDER
+# QUARTER SLIDER STEPS + MARKS
 # -----------------------------
 quarter_steps = (
     merged["quarter_start"]
@@ -139,26 +140,26 @@ quarter_steps = (
     .unique()
 )
 
+# ❌ Remove Q4 2026
 quarter_steps = [q for q in quarter_steps if not (q.year == 2026 and q.month == 10)]
 quarter_steps = list(quarter_steps)
 
 if not quarter_steps:
-    raise ValueError("No quarters found after parsing sample_date.")
+    raise ValueError("No quarters found after parsing sample_date → sample_datetime.")
 
 marks = {
     0: quarter_label(quarter_steps[0]),
     len(quarter_steps) - 1: quarter_label(quarter_steps[-1]),
 }
-
 for i, qs in enumerate(quarter_steps):
-    if qs.month == 1:
+    if qs.month == 1:  # Q1
         marks[i] = quarter_label(qs)
 
 # -----------------------------
 # DASH APP
 # -----------------------------
 app = Dash(__name__)
-server = app.server
+server = app.server  # IMPORTANT for gunicorn on Render
 
 app.layout = html.Div(
     style={
@@ -171,12 +172,14 @@ app.layout = html.Div(
         "fontFamily": "Arial, sans-serif",
     },
     children=[
+        # FULLSCREEN MAP
         dcc.Graph(
             id="map",
             style={"width": "100vw", "height": "100vh"},
             config={"responsive": True, "displayModeBar": True},
         ),
 
+        # FLOATING CONTROL PANEL (overlay)
         html.Div(
             style={
                 "position": "absolute",
@@ -194,6 +197,11 @@ app.layout = html.Div(
             },
             children=[
                 html.Div(
+                    "StreetSafe Density Map (interactive map)",
+                    style={"fontWeight": "700", "fontSize": "16px", "marginBottom": "8px"},
+                ),
+
+                html.Div(
                     style={"marginBottom": "10px"},
                     children=[
                         html.Div("Substance", style={"fontSize": "12px", "marginBottom": "4px"}),
@@ -204,17 +212,6 @@ app.layout = html.Div(
                             clearable=False,
                         ),
                     ],
-                ),
-
-                html.Div(
-                    id="q_label",
-                    style={
-                        "fontSize": "18px",
-                        "fontWeight": "600",
-                        "marginTop": "10px",
-                        "marginBottom": "6px",
-                        "color": "#222",
-                    }
                 ),
 
                 html.Div(
@@ -232,7 +229,18 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-                
+
+                html.Div(
+                    id="q_label",
+                    style={
+                        "fontSize": "18px",
+                        "fontWeight": "600",
+                        "marginTop": "10px",
+                        "marginBottom": "6px",
+                        "color": "#222",
+                    }
+                ),
+
                 dcc.Checklist(
                     id="all_time",
                     options=[{"label": " Show all samples", "value": "all"}],
@@ -240,7 +248,7 @@ app.layout = html.Div(
                     style={"fontSize": "18px", "fontWeight": "600"},
                 ),
                 html.Div(
-                    "When checked, the quarter slider is deactivated.",
+                    "When checked, the quarter slider is ignored.",
                     style={"fontSize": "12px", "color": "#555", "marginTop": "4px"}
                 ),
             ],
@@ -259,6 +267,7 @@ app.layout = html.Div(
 def update_map(substance, q_idx, all_time_values):
     show_all = "all" in (all_time_values or [])
 
+    # Defensive: if quarter_steps is empty, avoid crashes
     selected_q = quarter_steps[int(q_idx)] if quarter_steps else None
 
     sub_df = merged[merged["substance_clean"] == substance] if substance else merged
@@ -279,7 +288,8 @@ def update_map(substance, q_idx, all_time_values):
             lon=agg["lng"] if len(agg) else [],
             z=agg["count"] if len(agg) else [],
             radius=RADIUS,
-            name=substance or ""
+            name=substance or "",
+            hoverinfo="skip"
         )
     )
 
@@ -303,6 +313,9 @@ def update_map(substance, q_idx, all_time_values):
     return fig, label, show_all
 
 
+# -----------------------------
+# ENTRYPOINT (Render)
+# -----------------------------
 if __name__ == "__main__":
     host = "0.0.0.0"
     port = int(os.environ.get("PORT", 8050))
