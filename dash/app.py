@@ -243,7 +243,7 @@ app.layout = html.Div(
                     style={"fontSize": "18px", "fontWeight": "600"},
                 ),
                 html.Div(
-                    "When checked, the quarter slider is deactivated.",
+                    "When checked, the quarter slider is ignored.",
                     style={"fontSize": "12px", "color": "#555", "marginTop": "4px"}
                 ),
             ],
@@ -314,7 +314,3 @@ if __name__ == "__main__":
     host = "0.0.0.0"
     port = int(os.environ.get("PORT", 8050))
     app.run(debug=False, host=host, port=port)
-
-
-
-
