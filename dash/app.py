@@ -283,8 +283,7 @@ def update_map(substance, q_idx, all_time_values):
             lon=agg["lng"] if len(agg) else [],
             z=agg["count"] if len(agg) else [],
             radius=RADIUS,
-            name=substance or "",
-            hoverinfo="skip"
+            name=substance or ""
         )
     )
 
@@ -315,4 +314,5 @@ if __name__ == "__main__":
     host = "0.0.0.0"
     port = int(os.environ.get("PORT", 8050))
     app.run(debug=False, host=host, port=port)
+
 
