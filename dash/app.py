@@ -197,11 +197,6 @@ app.layout = html.Div(
             },
             children=[
                 html.Div(
-                    "StreetSafe Density Map (interactive map)",
-                    style={"fontWeight": "700", "fontSize": "16px", "marginBottom": "8px"},
-                ),
-
-                html.Div(
                     style={"marginBottom": "10px"},
                     children=[
                         html.Div("Substance", style={"fontSize": "12px", "marginBottom": "4px"}),
@@ -212,6 +207,17 @@ app.layout = html.Div(
                             clearable=False,
                         ),
                     ],
+                ),
+
+                html.Div(
+                    id="q_label",
+                    style={
+                        "fontSize": "18px",
+                        "fontWeight": "600",
+                        "marginTop": "10px",
+                        "marginBottom": "6px",
+                        "color": "#222",
+                    }
                 ),
 
                 html.Div(
@@ -229,18 +235,7 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-
-                html.Div(
-                    id="q_label",
-                    style={
-                        "fontSize": "18px",
-                        "fontWeight": "600",
-                        "marginTop": "10px",
-                        "marginBottom": "6px",
-                        "color": "#222",
-                    }
-                ),
-
+                
                 dcc.Checklist(
                     id="all_time",
                     options=[{"label": " Show all samples", "value": "all"}],
@@ -248,7 +243,7 @@ app.layout = html.Div(
                     style={"fontSize": "18px", "fontWeight": "600"},
                 ),
                 html.Div(
-                    "When checked, the quarter slider is ignored.",
+                    "When checked, the quarter slider is deactivated.",
                     style={"fontSize": "12px", "color": "#555", "marginTop": "4px"}
                 ),
             ],
@@ -320,3 +315,4 @@ if __name__ == "__main__":
     host = "0.0.0.0"
     port = int(os.environ.get("PORT", 8050))
     app.run(debug=False, host=host, port=port)
+
