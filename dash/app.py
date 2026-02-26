@@ -111,7 +111,6 @@ valid = merged.loc[
 
 counts = valid["substance_clean"].value_counts()
 top_substances = counts.head(TOP_N_SUBSTANCES).index.tolist()
-sorted_substances = sorted(top_substances, key=str.lower)
 
 for s in FORCE_INCLUDE:
     if s in counts.index and s not in top_substances:
@@ -203,8 +202,8 @@ app.layout = html.Div(
                         html.Div("Substance", style={"fontSize": "12px", "marginBottom": "4px"}),
                         dcc.Dropdown(
                             id="substance",
-                            options=[{"label": s, "value": s} for s in sorted_substances],
-                            value=sorted_substances[0] if sorted_substances else None,
+                            options=[{"label": s, "value": s} for s in top_substances],
+                            value=top_substances[0] if top_substances else None,
                             clearable=False,
                         ),
                     ],
@@ -315,6 +314,7 @@ if __name__ == "__main__":
     host = "0.0.0.0"
     port = int(os.environ.get("PORT", 8050))
     app.run(debug=False, host=host, port=port)
+
 
 
 
