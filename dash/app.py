@@ -202,9 +202,11 @@ app.layout = html.Div(
                         html.Div("Substance", style={"fontSize": "12px", "marginBottom": "4px"}),
                         dcc.Dropdown(
                             id="substance",
-                            options=[{"label": s, "value": s} for s in top_substances],
+                            options=[{"label": s, "value": s} for s in sorted(top_substances, key=str.lower)],
                             value=top_substances[0] if top_substances else None,
                             clearable=False,
+                            maxHeight=600,
+                            
                         ),
                     ],
                 ),
@@ -314,6 +316,7 @@ if __name__ == "__main__":
     host = "0.0.0.0"
     port = int(os.environ.get("PORT", 8050))
     app.run(debug=False, host=host, port=port)
+
 
 
 
