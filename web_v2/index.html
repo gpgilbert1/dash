@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drug Heatmap · StreetSafe Supply Network</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- App -->
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <!-- Full-viewport app shell -->
+  <div id="app">
+    <div id="map"></div>
+
+    <!-- Left sidebar -->
+    <aside class="sidebar" id="sidebar">
+
+      <!-- Header -->
+      <header class="sidebar-header">
+        <h1 class="sidebar-title">DRUG HEATMAP</h1>
+        <p class="sidebar-sub">StreetSafe Supply Network</p>
+      </header>
+
+      <!-- Substance multi-select -->
+      <section class="ctrl-section">
+        <span class="ctrl-label">SUBSTANCES</span>
+        <div class="ms-wrap" id="ms-wrap">
+          <div class="ms-trigger" id="ms-trigger" tabindex="0"
+               role="combobox" aria-haspopup="listbox" aria-expanded="false"
+               aria-label="Select substances">
+            <div class="ms-chips" id="ms-chips"></div>
+            <input class="ms-input" id="ms-input"
+                   placeholder="All substances…"
+                   autocomplete="off" spellcheck="false" aria-label="Search substances">
+            <svg class="ms-caret" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+              <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="ms-panel" id="ms-panel" hidden role="listbox" aria-multiselectable="true">
+            <div class="ms-panel-hdr">
+              <button class="ms-action-btn" id="ms-select-all">Select all</button>
+              <button class="ms-action-btn" id="ms-clear">Clear</button>
+            </div>
+            <div class="ms-items" id="ms-items"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="ctrl-divider"></div>
+
+      <!-- Time period -->
+      <section class="ctrl-section">
+        <span class="ctrl-label">TIME PERIOD</span>
+        <label class="toggle-row">
+          <span class="toggle-sw">
+            <input type="checkbox" id="all-time-cb">
+            <span class="toggle-track"></span>
+          </span>
+          <span class="toggle-text">ALL SAMPLES</span>
+        </label>
+        <div class="quarter-block" id="quarter-block" aria-hidden="true">
+          <div class="quarter-val" id="quarter-val"></div>
+          <div class="range-wrap">
+            <input type="range" class="quarter-range" id="quarter-range"
+                   min="0" max="0" value="0">
+          </div>
+          <div class="mark-row" id="mark-row"></div>
+        </div>
+      </section>
+
+      <div class="ctrl-divider"></div>
+
+      <!-- Stats -->
+      <footer class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-n" id="stat-samples">—</span>
+          <span class="stat-l">SAMPLES</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-n" id="stat-locs">—</span>
+          <span class="stat-l">LOCATIONS</span>
+        </div>
+      </footer>
+
+    </aside>
+  </div>
+
+  <!-- Loading screen -->
+  <div class="load-screen" id="load-screen">
+    <div class="load-ring"></div>
+    <p class="load-text">Loading data…</p>
+  </div>
+
+  <!-- CDN scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
