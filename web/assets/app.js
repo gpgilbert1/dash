@@ -7,9 +7,9 @@
    ============================================================ */
 
 /* ── CONFIG ─────────────────────────────────────────────── */
-const CSV_OLD    = 'data/streetsafe_results.csv';
-const CSV_NEW    = 'data/streetsafe_results_new.csv';
-const CSV_CITIES = 'data/uscities.csv';
+const CSV_OLD    = 'dash/streetsafe_results.csv';
+const CSV_NEW    = 'dash/streetsafe_results_new.csv';
+const CSV_CITIES = 'dash/uscities.csv';
 
 const TOP_N         = 50;
 const HEAT_RADIUS   = 28;
